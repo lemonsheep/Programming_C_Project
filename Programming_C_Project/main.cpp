@@ -10,7 +10,6 @@
 #define area_player1_and_player2 3
 
 void Initialization();
-Player move(int );
 void dribble(int player_num);
 void shoot(int player_num);
 void Change_Location_In_Map(int , int , int , int , int , int );
@@ -45,6 +44,7 @@ Football_areas Areas[3][5]; // Football field
 Football Football_position; // Record Football Location
 char map[13][31]; // Screen
 int player1_goal = 0, player2_goal = 0;
+
 
 //	Initialization function:
 //	Initialization at the beginning of the game.
