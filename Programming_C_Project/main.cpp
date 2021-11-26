@@ -10,6 +10,9 @@
 #define area_player1_and_player2 3
 
 void Initialization();
+Player move(int );
+void dribble(int player_num);
+void shoot(int player_num);
 void Change_Location_In_Map(int , int , int , int , int , int );
 void Free_Location(int , int , int , int , int , int );
 void Draw();
