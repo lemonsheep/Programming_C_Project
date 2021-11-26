@@ -23,7 +23,7 @@ typedef struct Player {		//Define Player property
 	int column;
 	bool ball;	//To judge whether Player has a ball
 	int player_number;
-	float shoot_addition = 0;
+	int shoot_level = 1;	//Record the player's level of shooting skill at that time
 };
 
 typedef struct Football {	//Define Football position
@@ -813,14 +813,46 @@ void dribble(int player_num) {
 
 /*	Player Shoot function:
 	Make the ball fall into the corresponding area randomly.
+	(Increase the probability of shooting into the door according to different shooting skill levels)
 	Parameter->player_num:Player number 1 or 2*/
 void shoot(int player_num) {
 	srand((unsigned)time(NULL));
-	if (player_num == 1) {
-		int new_ball_pos_r = rand() % 3;	//Football's new position
-		int new_ball_pos_c = rand() % (4 - (player1.column  + 1) + 1) + player1.column + 1;
-		
-
+	if (player_num == 1) {	//Player 1
+		int new_ball_pos_r;	
+		int new_ball_pos_c;
+		if (player1.shoot_level == 1) {
+			 new_ball_pos_r = rand() % 3;	//Football's new position
+			 new_ball_pos_c = rand() % (4 - (player1.column + 1) + 1) + player1.column + 1;
+		}
+		else if (player1.shoot_level == 2) {
+			 new_ball_pos_r = rand() % 3;	//Football's new position
+			 new_ball_pos_c = rand() % (4 - (player1.column + 1) + 1) + player1.column + 1;
+			if (new_ball_pos_r != 1 && new_ball_pos_c != 4) {	//shoot again(increase the probability of shooting)
+				printf("calculating....\n");
+				Sleep(1000);
+				srand((unsigned)time(NULL));
+				new_ball_pos_r = rand() % 3;	//Football's new position
+				new_ball_pos_c = rand() % (4 - (player1.column + 1) + 1) + player1.column + 1;
+			}
+		}
+		else if (player1.shoot_level == 3) {
+			 new_ball_pos_r = rand() % 3;	//Football's new position
+			 new_ball_pos_c = rand() % (4 - (player1.column + 1) + 1) + player1.column + 1;
+			if (new_ball_pos_r != 1 && new_ball_pos_c != 4) {//shoot again(increase the probability of shooting)
+				printf("calculating....\n");
+				Sleep(1000);
+				srand((unsigned)time(NULL));
+				new_ball_pos_r = rand() % 3;	//Football's new position
+				new_ball_pos_c = rand() % (4 - (player1.column + 1) + 1) + player1.column + 1;
+				if (new_ball_pos_r != 1 && new_ball_pos_c != 4) {
+					printf("calculating....\n");
+					Sleep(1000);
+					srand((unsigned)time(NULL));
+					new_ball_pos_r = rand() % 3;	//Football's new position
+					new_ball_pos_c = rand() % (4 - (player1.column + 1) + 1) + player1.column + 1;
+				}
+			}
+		}
 		player1.ball = false;	//Change properties of each object after shoot
 		Areas[player1.row][player1.column].football = false;
 		Areas[new_ball_pos_r][new_ball_pos_c].football = true;
@@ -828,10 +860,41 @@ void shoot(int player_num) {
 		Football_position.column = new_ball_pos_c;
 	}
 	else {
-		int new_ball_pos_r = rand() % 3;	//Football's new position
-		int new_ball_pos_c = rand() % player2.column;
-		srand((unsigned)time(NULL));
-
+		int new_ball_pos_r;
+		int new_ball_pos_c;
+		if (player2.shoot_level == 1) {
+			 new_ball_pos_r = rand() % 3;	//Football's new position
+			 new_ball_pos_c = rand() % player2.column;
+		}
+		else if (player2.shoot_level == 2) {
+			 new_ball_pos_r = rand() % 3;	//Football's new position
+			 new_ball_pos_c = rand() % player2.column;
+			if (new_ball_pos_r != 1 && new_ball_pos_c != 4) {//shoot again(increase the probability of shooting)
+				printf("calculating....\n");
+				Sleep(1000);
+				srand((unsigned)time(NULL));
+				new_ball_pos_r = rand() % 3;	//Football's new position
+				new_ball_pos_c = rand() % player2.column;
+			}
+		}
+		else if (player2.shoot_level == 3) {
+			 new_ball_pos_r = rand() % 3;	//Football's new position
+			 new_ball_pos_c = rand() % player2.column;
+			if (new_ball_pos_r != 1 && new_ball_pos_c != 4) {//shoot again(increase the probability of shooting)
+				printf("calculating....\n");
+				Sleep(1000);
+				srand((unsigned)time(NULL));
+				new_ball_pos_r = rand() % 3;	//Football's new position
+				new_ball_pos_c = rand() % player2.column;
+				if (new_ball_pos_r != 1 && new_ball_pos_c != 4) {//shoot again(increase the probability of shooting)
+					printf("calculating....\n");
+					Sleep(1000);
+					srand((unsigned)time(NULL));
+					new_ball_pos_r = rand() % 3;	//Football's new position
+					new_ball_pos_c = rand() % player2.column;
+				}
+			}
+		}
 		player2.ball = false;	//Change properties of each object after shoot
 		Areas[player2.row][player2.column].football = false;
 		Areas[new_ball_pos_r][new_ball_pos_c].football = true;
@@ -984,7 +1047,7 @@ void Draw() {
 			printf("                       z x c	                       b n m");
 		}
 		else if (i == 5) { printf("Player 1's score:%d	Player 2's score:%d", player1_goal, player2_goal); }
-		else if (i == 7) { printf("Player 1's Shoot Addition skills:%d	Player 2's Shoot Addition skills:%d", player1.shoot_addition, player2.shoot_addition); }
+		else if (i == 7) { printf("Player 1's Shoot Level:%d	Player 2's Shoot Level:%d", player1.shoot_level, player2.shoot_level); }
 
 		printf("\n");
 	}
@@ -1075,8 +1138,10 @@ void Timed_game_mode(int Time_limit) {
 		if (Areas[1][4].football == true) {
 			printf("Player 1 gets 1 point!!\n");
 			player1_goal++;
+			if (player1.shoot_level < 3)	//Increase skill level after goal
+				player1.shoot_level++;
 			Sleep(2000);
-			Initialization();
+			Initialization();	//Strat a new game
 			system("cls");
 		}
 		else system("cls");
@@ -1085,6 +1150,8 @@ void Timed_game_mode(int Time_limit) {
 		if (Areas[1][0].football == true) {
 			printf("Player 2 gets 1 point!!\n");
 			player2_goal++;
+			if (player2.shoot_level < 3)	//Increase skill level after goal
+				player2.shoot_level++;
 			Sleep(2000);
 			Initialization();
 			system("cls");
@@ -1093,23 +1160,25 @@ void Timed_game_mode(int Time_limit) {
 	}
 }
 
-//	Scoring_game_mode function: Two out of three sets match.
+//	Scoring_game_mode function: Three points first to win the game
 void Scoring_game_mode() {
 	while (1) {
 		Action(1, player1.ball);	//Player 1's round
 		if (Areas[1][4].football == true) {
 			printf("Player 1 gets 1 point!!\n");
 			player1_goal++;
+			if (player1.shoot_level < 3)	//Increase skill level after goal
+				player1.shoot_level++;
 			Sleep(2000);
 			Initialization();
 			system("cls");
 		}
 		else system("cls");
 
-		if (player1_goal == 2) {
+		if (player1_goal == 3) {
 			printf("Player 1 Wins!!!\n"); break;
 		}
-		if (player2_goal == 2) {
+		if (player2_goal == 3) {
 			printf("Player 2 Wins!!!\n"); break;
 		}
 
@@ -1117,16 +1186,18 @@ void Scoring_game_mode() {
 		if (Areas[1][0].football == true) {
 			printf("Player 2 gets 1 point!!\n");
 			player2_goal++;
+			if (player2.shoot_level < 3)	//Increase skill level after goal
+				player2.shoot_level++;
 			Sleep(2000);
 			Initialization();
 			system("cls");
 		}
 		else system("cls");
 
-		if (player1_goal == 2) {
+		if (player1_goal == 3) {
 			printf("Player 1 Wins!!!\n"); break;
 		}
-		if (player2_goal == 2) {
+		if (player2_goal == 3) {
 			printf("Player 2 Wins!!!\n"); break;
 		}
 	}
