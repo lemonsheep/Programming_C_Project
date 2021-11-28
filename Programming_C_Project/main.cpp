@@ -10,8 +10,9 @@
 #define area_player1_and_player2 3
 
 void Initialization();
-void dribble(int player_num);
-void shoot(int player_num);
+void dribble(int );
+void shoot(int );
+void Action(int , bool );
 void Change_Location_In_Map(int , int , int , int , int , int );
 void Free_Location(int , int , int , int , int , int );
 void Draw();
@@ -45,7 +46,6 @@ Football Football_position; // Record Football Location
 char map[13][31]; // Screen
 int player1_goal = 0, player2_goal = 0;
 
-
 //	Initialization function:
 //	Initialization at the beginning of the game.
 void Initialization() {
@@ -62,7 +62,7 @@ void Initialization() {
 	player2.column = 4;
 	player2.player_number = 2;
 
-	Areas[1][0].football = false;
+	Areas[1][0].football = false;	//Initialize football status
 	Areas[1][4].football = false;
 	Areas[1][2].football = true;		//Initialize Areas
 	Areas[1][2].player = area_player1;
@@ -99,7 +99,7 @@ Player move(int player_num) {		//Player move to new area without football
 					continue;
 				}
 				else {
-					if (Areas[player1.row][player1.column + 1].player == area_player2) {
+					if (Areas[player1.row][player1.column + 1].player == area_player2) {	//Judge new area whether having another player, convenient to change Areas.player
 						Areas[player1.row][player1.column].player = area_without_player;	//Change properties after move
 						Areas[player1.row][player1.column + 1].player = area_player1_and_player2;
 						player1.column++;
@@ -433,9 +433,9 @@ Player move(int player_num) {		//Player move to new area without football
 	}
 }
 
-//	Player Dribble function:
-//	Player move to a new area when the player have the football.
-//	Parameter->player_num:Player number 1 or 2
+/*	Player Dribble function:
+	Player move to a new area when the player have the football.
+	Parameter->player_num:Player number 1 or 2*/
 void dribble(int player_num) {
 	if (player_num == 1) {
 		printf("Input your move direction:");
@@ -1147,7 +1147,11 @@ void Timed_game_mode(int Time_limit) {
 			Initialization();	//Strat a new game
 			system("cls");
 		}
-		else system("cls");
+		else {
+			if (player1.shoot_level > 1)
+				player1.shoot_level--;
+			system("cls");
+		}
 
 		Action(2, player2.ball);	//Player 2's round
 		if (Areas[1][0].football == true) {
@@ -1159,7 +1163,11 @@ void Timed_game_mode(int Time_limit) {
 			Initialization();
 			system("cls");
 		}
-		else system("cls");
+		else {
+			if (player2.shoot_level > 1)
+				player2.shoot_level--;
+			system("cls");
+		}
 	}
 }
 
@@ -1176,7 +1184,11 @@ void Scoring_game_mode() {
 			Initialization();
 			system("cls");
 		}
-		else system("cls");
+		else {
+			if (player1.shoot_level > 1)
+				player1.shoot_level--;
+			system("cls");
+		}
 
 		if (player1_goal == 3) {
 			printf("Player 1 Wins!!!\n"); break;
@@ -1195,7 +1207,11 @@ void Scoring_game_mode() {
 			Initialization();
 			system("cls");
 		}
-		else system("cls");
+		else {
+			if (player2.shoot_level > 1)
+				player2.shoot_level--;
+			system("cls");
+		}
 
 		if (player1_goal == 3) {
 			printf("Player 1 Wins!!!\n"); break;
